@@ -139,6 +139,7 @@ MagnetPlugin
 	private IntParameter	 	sources_extra_param;
 	private BooleanParameter	magnet_recovery;
 	private IntParameter	 	magnet_recovery_concurrency;
+	private BooleanParameter	magnet_rename;
 
 	private Map<String,BooleanParameter> net_params = new HashMap<>();
 
@@ -212,16 +213,15 @@ MagnetPlugin
 		
 		magnet_recovery.addEnabledOnSelection( magnet_recovery_concurrency );
 
-		BooleanParameter rename = config.addBooleanParameter2( "MagnetPlugin.rename.using.dn", "MagnetPlugin.rename.using.dn", false );
+		magnet_rename = config.addBooleanParameter2( "MagnetPlugin.rename.using.dn", "MagnetPlugin.rename.using.dn", false );
 		
 		BooleanParameter rename_ext = config.addBooleanParameter2( "MagnetPlugin.rename.using.dn.only.with.ext", "MagnetPlugin.rename.using.dn.only.with.ext", false );	
 		
 		rename_ext.setIndent( 1, true );
 		
-		rename.addEnabledOnSelection( rename_ext );
+		magnet_rename.addEnabledOnSelection( rename_ext );
 		
-		BooleanParameter position = config.addBooleanParameter2( "MagnetPlugin.dl.position.from.mag.time", "MagnetPlugin.dl.position.from.mag.time", true );
-
+		config.addBooleanParameter2( "MagnetPlugin.dl.position.from.mag.time", "MagnetPlugin.dl.position.from.mag.time", true );
 		
 		Parameter[] nps = new Parameter[ AENetworkClassifier.AT_NETWORKS.length ];
 
@@ -905,6 +905,12 @@ MagnetPlugin
 				});
 	}
 
+	protected boolean
+	getRenameDisplayName()
+	{
+		return( magnet_rename != null && magnet_rename.getValue());
+	}
+	
 	public String
 	addSource(
 		Download			download,
@@ -1771,7 +1777,8 @@ MagnetPlugin
 
 				boolean	update_torrent = false;
 
-				if ( dn != null ){
+				
+				if ( dn != null && getRenameDisplayName()){
 					
 					if ( TorrentUtils.getDisplayName( torrent ) == null ){
 						
@@ -3157,6 +3164,8 @@ MagnetPlugin
 										
 										if ( done ){
 											
+											MagnetPluginMDDownloader downloader = null;
+											
 											synchronized( md_downloader ){
 												
 												try{
@@ -3164,17 +3173,17 @@ MagnetPlugin
 									
 														md_delay_event[0].cancel();
 									
-														MagnetPluginMDDownloader downloader = md_downloader[0];
-														
-														if ( downloader != null ){
-									
-															downloader.cancel();
-														}
+														downloader = md_downloader[0];
 													}
 												}finally{
 													
 													final_timer[0].cancel();
 												}
+											}
+											
+											if ( downloader != null ){
+												
+												downloader.cancel();
 											}
 										}
 									}
@@ -3201,22 +3210,24 @@ MagnetPlugin
 			}
 		}finally{
 
-			if ( final_timer[0] == null ){
-				
-				synchronized( md_downloader ){
-	
+			MagnetPluginMDDownloader downloader = null;
+			
+			synchronized( md_downloader ){
+
+				if ( final_timer[0] == null ){
+					
 					if ( md_delay_event[0] != null ){
 	
 						md_delay_event[0].cancel();
 	
-						MagnetPluginMDDownloader downloader = md_downloader[0];
-						
-						if ( downloader != null ){
-	
-							downloader.cancel();
-						}
+						downloader = md_downloader[0];
 					}
 				}
+			}
+			
+			if ( downloader != null ){
+					
+				downloader.cancel();
 			}
 		}
 	}

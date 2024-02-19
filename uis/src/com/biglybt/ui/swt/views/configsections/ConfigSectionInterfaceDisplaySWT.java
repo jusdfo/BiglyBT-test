@@ -253,6 +253,10 @@ public class ConfigSectionInterfaceDisplaySWT
 		add(new BooleanParameterImpl(
 				"IconBar.visible." + TorrentUtil.TU_ITEM_ALLOCATE,
 				"label.allocate"), listToolbarItems);
+		
+		add(new BooleanParameterImpl(
+				"IconBar.visible." + TorrentUtil.TU_ITEM_ARCHIVE,
+				"MyTorrentsView.menu.archive"), listToolbarItems);
 
 		if (isAZ3) {
 			add(new BooleanParameterImpl(
@@ -370,6 +374,17 @@ public class ConfigSectionInterfaceDisplaySWT
 				add(compact, listSideBar);
 			}
 
+			String[] pop_labs = {
+					MessageText.getString("sb.dblclick.action.ontop"),
+					MessageText.getString("sb.dblclick.action.independent"),
+				};
+
+				add(new IntListParameterImpl("Side Bar Double Click Action",
+						"sb.dblclick.action", new int[] {
+							0,
+							1,
+						}, pop_labs), listSideBar);
+			
 			ParameterGroupImpl group = add(new ParameterGroupImpl("v3.MainWindow.menu.view.sidebar", listSideBar));
 			
 			group.setReferenceID( REFID_SECTION_SIDEBAR );
@@ -688,6 +703,11 @@ public class ConfigSectionInterfaceDisplaySWT
 				"ConfigView.section.style.graphicsUpdate", 1, Integer.MAX_VALUE),
 				listRefresh);
 
+		BooleanParameterImpl disableWhenMin = new BooleanParameterImpl(
+				"GUI Refresh Disable When Minimized", "ConfigView.section.style.guiUpdateDisableWhenMin");
+		
+		add(disableWhenMin, Parameter.MODE_INTERMEDIATE, listRefresh);
+		
 		add(new ParameterGroupImpl("upnp.refresh.button", listRefresh));
 
 	}

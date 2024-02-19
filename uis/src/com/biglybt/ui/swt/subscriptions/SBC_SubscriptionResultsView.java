@@ -440,6 +440,7 @@ SBC_SubscriptionResultsView
 				lblWithKWImg.setImage( imageLoader.getImage( with?"icon_filter_plus":"icon_filter_minus"));
 
 				final Text textWithKW = new Text(cWithKW, SWT.BORDER);
+				Utils.setTT(textWithKW,MessageText.getString("SubscriptionResults.filter.words.tt" ));
 				textWithKW.setMessage(MessageText.getString(with?"SubscriptionResults.filter.with.words":"SubscriptionResults.filter.without.words"));
 				GridData gd = new GridData();
 				gd.widthHint = 100;
@@ -909,6 +910,28 @@ SBC_SubscriptionResultsView
 					}
 				});
 
+		tableManager.registerColumn(
+			SubscriptionResultFilterable.class,
+			ColumnSearchSubResultSeeds.COLUMN_ID,
+				new TableColumnCreationListener() {
+
+					@Override
+					public void tableColumnCreated(TableColumn column) {
+						new ColumnSearchSubResultSeeds(column);
+					}
+				});
+
+		tableManager.registerColumn(
+			SubscriptionResultFilterable.class,
+			ColumnSearchSubResultPeers.COLUMN_ID,
+				new TableColumnCreationListener() {
+
+					@Override
+					public void tableColumnCreated(TableColumn column) {
+						new ColumnSearchSubResultPeers(column);
+					}
+				});
+		
 		tableManager.registerColumn(
 			SubscriptionResultFilterable.class,
 			ColumnSearchSubResultRatings.COLUMN_ID,

@@ -74,7 +74,7 @@ ResourceDownloaderTorrentImpl
 	protected boolean					completed;
 
 	protected ResourceDownloader		current_downloader;
-	protected Object					result;
+	protected volatile Object			result;
 	protected AESemaphore				done_sem	= new AESemaphore("RDTorrent");
 
 	public
@@ -471,7 +471,10 @@ ResourceDownloaderTorrentImpl
 
 			download.moveTo(1);
 
-			download.setForceStart( true );
+			if ( !download.isComplete()){
+			
+				download.setForceStart( true );
+			}
 
 				// Prevents any move-on-completion or move-on-removal behaviour happening.
 
@@ -511,7 +514,7 @@ ResourceDownloaderTorrentImpl
 					@Override
 					public void
 					stateChanged(
-						final Download		download,
+						Download		download,
 						int				old_state,
 						int				new_state )
 					{
@@ -521,18 +524,11 @@ ResourceDownloaderTorrentImpl
 
 							download.removeListener( this );
 
-							PluginInitializer.getDefaultInterface().getUtilities().createThread(
-								"resource complete event dispatcher",
-								new Runnable()
-								{
-									@Override
-									public void
-									run()
-									{
-										downloadSucceeded( download, torrent_file, data_dir );
-									}
-								});
-
+							AEThread2.createAndStartDaemon(	"resource complete event dispatcher", ()->{
+								
+								downloadSucceeded( download, torrent_file, data_dir );
+								
+							});
 						}
 					}
 
@@ -546,56 +542,45 @@ ResourceDownloaderTorrentImpl
 					}
 				});
 
-			Thread	t =
-				new AEThread( "RDTorrent percentage checker")
-				{
-					@Override
-					public void
-					runSupport()
-					{
-						int	last_percentage = 0;
+			AEThread2.createAndStartDaemon( "RDTorrent percentage checker",()->{
 
-						while( result == null ){
+				int	last_percentage = 0;
 
-							int	this_percentage = download.getStats().getDownloadCompleted(false)/10;
+				while( result == null ){
 
-							long	total	= torrent.getSize();
+					int	this_percentage = download.getStats().getDownloadCompleted(false)/10;
 
-							if ( this_percentage != last_percentage ){
+					if ( this_percentage != last_percentage ){
 
-								reportPercentComplete( ResourceDownloaderTorrentImpl.this, this_percentage );
+						reportPercentComplete( ResourceDownloaderTorrentImpl.this, this_percentage );
 
-								last_percentage = this_percentage;
-							}
-
-							try{
-								Thread.sleep(1000);
-
-							}catch( Throwable e ){
-
-								Debug.printStackTrace( e );
-							}
-						}
+						last_percentage = this_percentage;
 					}
-				};
 
-			t.setDaemon( true );
+					try{
+						Thread.sleep(1000);
 
-			t.start();
+					}catch( Throwable e ){
+
+						Debug.printStackTrace( e );
+					}
+				}
+			});
+	
 			
 			int state = download.getState();
-			
-			if ( state == Download.ST_STOPPED ){
-
-					// might have been added-stopped, start if so
-		
-				download.start();
-				
-			}else if ( state == Download.ST_SEEDING ){
+							
+			if ( state == Download.ST_SEEDING || download.isComplete()){
 
 					// its possible that the d/l has already occurred and it is seeding!
 
 				downloadSucceeded( download, torrent_file, data_dir );
+				
+			}else if ( state == Download.ST_STOPPED ){
+
+					// might have been added-stopped, start if so
+		
+				download.start();
 			}
 		}catch( Throwable e ){
 

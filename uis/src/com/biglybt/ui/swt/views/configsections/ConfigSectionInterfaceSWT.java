@@ -34,6 +34,7 @@ import com.biglybt.platform.PlatformManager;
 import com.biglybt.platform.PlatformManagerCapabilities;
 import com.biglybt.platform.PlatformManagerFactory;
 import com.biglybt.ui.common.RememberedDecisionsManager;
+import com.biglybt.ui.common.table.impl.TableColumnManager;
 import com.biglybt.ui.config.ConfigSectionImpl;
 import com.biglybt.ui.swt.Utils;
 import com.biglybt.ui.swt.systray.SystemTraySWT;
@@ -137,16 +138,6 @@ public class ConfigSectionInterfaceSWT
 				SystemTraySWT.getTray().dispose();
 			}
 		}));
-
-		if (Constants.isUnix) {
-			BooleanParameterImpl paramForceDorkTray = new BooleanParameterImpl(
-					"ui.forceDorkTray", "ConfigView.ui.forcedorktray");
-			add(paramForceDorkTray, Parameter.MODE_ADVANCED, listSysTray);
-			paramForceDorkTray.addListener(p -> Utils.execSWTThread(() -> {
-				SystemTraySWT.getTray().dispose();
-				SystemTraySWT.getTray();
-			}));
-		}
 
 		BooleanParameterImpl stdo = new BooleanParameterImpl(
 				"System Tray Disabled Override",
@@ -291,6 +282,17 @@ public class ConfigSectionInterfaceSWT
 		COConfigurationManager.addAndFireParameterListener(
 				"MessageBoxWindow.decisions", decisions_parameter_listener);
 
+		// table config
+		
+		ActionParameterImpl clear_tables_button = new ActionParameterImpl(
+				"ConfigView.section.interface.cleartables",
+				"ConfigView.section.interface.resetassocbutton");
+		add(clear_tables_button);
+
+		clear_tables_button.addListener(
+				param -> TableColumnManager.getInstance().resetAllTables());
+
+		
 		// reset associations
 
 		if (platform.hasCapability(

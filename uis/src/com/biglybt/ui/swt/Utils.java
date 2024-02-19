@@ -78,6 +78,7 @@ import com.biglybt.plugin.I2PHelpers;
 import com.biglybt.ui.UIFunctions;
 import com.biglybt.ui.UIFunctionsManager;
 import com.biglybt.ui.UIFunctionsUserPrompter;
+import com.biglybt.ui.common.table.impl.TableColumnManager;
 import com.biglybt.ui.swt.components.BufferedTruncatedLabel;
 import com.biglybt.ui.swt.imageloader.ImageLoader;
 import com.biglybt.ui.swt.mainwindow.ClipboardCopy;
@@ -213,8 +214,13 @@ public class Utils
 	private static Skinner	skinner;
 	private static int		skinning_enabled = 1;
 	
-	private static volatile boolean	dark_misc_things = false;
-	private static volatile boolean	gradient_fill	 = true;
+	private static volatile boolean	dark_misc_things 		= false;
+	private static volatile boolean	gradient_fill	 		= true;
+	
+	
+	private static volatile boolean	gui_refresh_disable_when_min	= false;
+	private static volatile boolean	gui_is_minimized				= false;
+	private static volatile boolean gui_refresh_enable				= true;
 	
 	private static String SHELL_METRICS_DISABLED_KEY = "utils:shmd";
 	
@@ -277,8 +283,11 @@ public class Utils
 		configOtherListener = new ParameterListener() {
 			@Override
 			public void parameterChanged(String parameterName) {
-				dark_misc_things	= COConfigurationManager.getBooleanParameter( "Dark Misc Colors" );
-				gradient_fill		= COConfigurationManager.getBooleanParameter( "Gradient Fill Selection" );
+				dark_misc_things				= COConfigurationManager.getBooleanParameter( "Dark Misc Colors" );
+				gradient_fill					= COConfigurationManager.getBooleanParameter( "Gradient Fill Selection" );
+				gui_refresh_disable_when_min	= COConfigurationManager.getBooleanParameter( "GUI Refresh Disable When Minimized" );
+				
+				gui_refresh_enable = !( gui_is_minimized && gui_refresh_disable_when_min );
 			}
 		};
 		
@@ -286,6 +295,7 @@ public class Utils
 				new String[]{
 					"Dark Misc Colors",
 					"Gradient Fill Selection",
+					"GUI Refresh Disable When Minimized",
 				},
 				configOtherListener );
 	}
@@ -936,6 +946,21 @@ public class Utils
 		}
 		
 		return( 100 );
+	}
+	
+	public static void
+	setUIVisible(
+		boolean	visible )
+	{
+		gui_is_minimized = !visible;
+		
+		gui_refresh_enable = !( gui_is_minimized && gui_refresh_disable_when_min );
+	}
+	
+	public static boolean
+	isUIUpdateEnabled()
+	{
+		return( gui_refresh_enable );
 	}
 	
 	public static void
@@ -2496,37 +2521,61 @@ public class Utils
 	public static void
 	launchFileExplicit(
 		String		sfile,
-		String		exe )
+		String...	cmd_args )
 	{
 		File	file = new File( sfile );
 
 		try{
-			System.out.println( "Launching " + sfile + " with " + exe );
+			String cmd = "";
+			
+			for ( String ca: cmd_args ){
+				
+				cmd += (cmd.isEmpty()?"":" ") + ca;	// should do something about spaces in ca someday
+			}
+			
+			System.out.println( "Launching " + sfile + " with " + cmd );
 
 			if ( Constants.isWindows ){
 
+					// handle fact that "explorer.exe /select," doesn't require a space :(
+				
+				if ( !cmd.endsWith( "," )){
+					
+					cmd += " ";
+				}
+				
+				try{
 					// need to use createProcess as we want to force the process to decouple correctly (otherwise Vuze won't close until the child closes)
 
-				try{
-					PlatformManagerFactory.getPlatformManager().createProcess( exe + " \"" + sfile + "\"", false );
+					PlatformManagerFactory.getPlatformManager().createProcess( cmd + "\"" + sfile + "\"", false );
 
 					return;
 
 				}catch( Throwable e ){
 				}
-			} else if (Constants.isOSX && exe.endsWith(".app")) {
+			} else if (Constants.isOSX && cmd.endsWith(".app")) {
+				
 				ProcessBuilder pb = GeneralUtils.createProcessBuilder(
-						file.getParentFile(), new String[] {
-								"open",
-								"-a",
-							exe,
+						file.getParentFile(), 
+						new String[] {
+							"open",
+							"-a",
+							cmd,
 							file.getName()
 						}, null);
+				
 				pb.start();
+				
 				return;
 			}
 
-			ProcessBuilder pb = GeneralUtils.createProcessBuilder( file.getParentFile(), new String[]{ exe, file.getName()}, null );
+			String[] args = new String[cmd_args.length+1];
+		
+			System.arraycopy(cmd_args,0,args,0,cmd_args.length);
+			
+			args[args.length-1] = file.getName();
+			
+			ProcessBuilder pb = GeneralUtils.createProcessBuilder( file.getParentFile(), args, null );
 
 			pb.start();
 
@@ -2973,6 +3022,37 @@ public class Utils
 		return( null );
 	}
 
+	public static final String PL_SHOW_FILE = "<showfile>";
+	
+	public static String
+	getPredefinedExplicitLauncher(
+		String	type )
+	{
+		for ( int i=0;i<ConfigKeysSWT.getLaunchHelperEntryCount();i++){
+
+			String exts = ConfigKeysSWT.getLaunchHelpersExts(i).trim();
+			String exe 	= ConfigKeysSWT.getLaunchHelpersProg(i).trim();
+
+			if ( exts.length() > 0 && exe.length() > 0 ){
+
+				exts = "," + exts.toLowerCase();
+
+				exts = exts.replaceAll( "\\.", "," );
+				exts = exts.replaceAll( ";", "," );
+				exts = exts.replaceAll( " ", "," );
+
+				exts = exts.replaceAll( "[,]+", "," );
+
+				if ( exts.contains( type )){
+
+					return( exe );
+				}
+			}
+		}
+
+		return( null );
+	}
+	
 	/**
 	 * Sets the checkbox in a Virtual Table while inside a SWT.SetData listener
 	 * trigger.  SWT 3.1 has an OSX bug that needs working around.
@@ -6248,7 +6328,8 @@ public class Utils
 		COConfigurationManager.removeParameterListeners(
 				new String[]{
 					"Dark Misc Colors",
-					"Gradient Fill Selection" },
+					"Gradient Fill Selection",
+					"GUI Refresh Disable When Minimized" },
 				configOtherListener);
 	}
 	
@@ -6257,25 +6338,16 @@ public class Utils
 		String		base,
 		String		sub )
 	{
-		return( base + "::" + sub );
+		return( TableColumnManager.createSubViewID(base,sub));
 	}
 	
 	public static String
 	getBaseViewID(
 		String		id )
 	{
-		int	pos = id.lastIndexOf( "::" );
-		
-		if ( pos == -1 ){
-			
-			return( id );
-			
-		}else{
-			
-			return( id.substring( 0, pos ));
-		}
+		return( TableColumnManager.getBaseViewID(id));
 	}
-		
+	
 	public static boolean
 	isDarkAppearanceNativeWindows()
 	{

@@ -1250,6 +1250,54 @@ public abstract class BaseMdiEntry
 		
 		result.put( "title", title );
 		
+		String title_id = getTitleID();
+		
+		if ( title_id != null && !title_id.isEmpty()){
+
+			boolean ok = false;
+			
+			if ( title_id.startsWith( "!" ) && title_id.endsWith( "!" )){
+			
+				String id = getId();
+
+				if ( MessageText.keyExists( id )){
+					
+					title_id = id;
+					
+					ok = true;
+					
+				}else{
+				
+					String test = id + ".title.full";
+	
+					if ( MessageText.keyExists( test )){
+						
+						title_id = test;
+						
+						ok = true;
+					}
+				}
+			}
+			
+			if ( ok || MessageText.keyExists( title_id )){
+				
+				result.put( "title_id", title_id );
+			}
+		}
+		
+		if ( !result.containsKey( "title_id" )){
+			
+			if ( vti != null ){
+				
+				title_id = (String)vti.getTitleInfoProperty( ViewTitleInfo.TITLE_TEXT_ID );
+				
+				if ( title_id != null && MessageText.keyExists( title_id )){
+				
+					result.put( "title_id", title_id );
+				}
+			}
+		}
+		
 		result.put( "skin_ref", getSkinRef());
 		
 		result.put( "skin_id", skin.getSkinID());
@@ -1263,6 +1311,11 @@ public abstract class BaseMdiEntry
 		if ( data_source == null ) {
 		
 			data_source = getInitialDataSource();
+		}
+		
+		if ( data_source == null ){
+			
+			data_source = getUserData( UD_STANDALONE_DATA_SOURCE );
 		}
 		
 		if ( data_source != null ) {
@@ -1326,13 +1379,20 @@ public abstract class BaseMdiEntry
 	buildStandAlone(
 		SWTSkinObjectContainer		soParent )
 	{
+		Object data_source = getDatasourceCore();
+
+		if ( data_source == null ){
+
+			data_source = getUserData( UD_STANDALONE_DATA_SOURCE );
+		}
+		
 		return(
 			buildStandAlone(
 				soParent,
 				getSkinRef(),
 				skin,
 				id,
-				getDatasourceCore(),
+				data_source,
 				getControlType(),
 				getEventListenerBuilder() ));
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Azureus Software, Inc. All Rights Reserved.
+ * Copyright (C) Azureus Software, Inc, All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,67 +15,52 @@
  *
  */
 
-package com.biglybt.ui.swt.columns.dlhistory;
+package com.biglybt.ui.swt.columns.searchsubs;
 
-import java.math.BigInteger;
 
-import com.biglybt.core.history.DownloadHistory;
-import com.biglybt.core.util.ByteFormatter;
+import com.biglybt.core.subs.util.SearchSubsResultBase;
 import com.biglybt.pif.ui.tables.*;
 
-public class ColumnDLHistoryHash
+
+public class ColumnSearchSubResultSeeds
 	implements TableCellRefreshListener, TableColumnExtraInfoListener
 {
-	public static String COLUMN_ID = "hash";
+	public static String COLUMN_ID = "seeds";
+
 
 	@Override
-	public void
-	fillTableColumnInfo(
-		TableColumnInfo info)
-	{
+	public void fillTableColumnInfo(TableColumnInfo info) {
 		info.addCategories(new String[] {
 			TableColumn.CAT_ESSENTIAL,
 		});
-
 		info.setProficiency(TableColumnInfo.PROFICIENCY_BEGINNER);
 	}
 
-	public
-	ColumnDLHistoryHash(
-		TableColumn column)
-	{
-		column.setWidth(200);
+	/** Default Constructor */
+	public ColumnSearchSubResultSeeds(TableColumn column) {
+		column.initialize(TableColumn.ALIGN_CENTER, TableColumn.POSITION_INVISIBLE, 60 );
+		column.setRefreshInterval(TableColumn.INTERVAL_INVALID_ONLY);
 		column.addListeners(this);
 	}
 
 	@Override
-	public void
-	refresh(
-		TableCell cell )
-	{
-		DownloadHistory dl = (DownloadHistory)cell.getDataSource();
+	public void refresh(TableCell cell) {
+		SearchSubsResultBase result = (SearchSubsResultBase) cell.getDataSource();
 
-		byte[]	hash = null;
+		long num = result.getNbSeeds();
 
-		if ( dl != null ){
-
-			hash = dl.getTorrentHash();
-		}
-
-		BigInteger sort = hash==null?new BigInteger(-1,new byte[0]):new BigInteger(1,hash);
-
-		if ( !cell.setSortValue(sort) && cell.isValid()){
+		if ( !cell.setSortValue(num) && cell.isValid()){
 
 			return;
 		}
 
-		if (!cell.isShown()){
-
+		if (!cell.isShown()) {
 			return;
 		}
 
-		String str = hash==null?"":ByteFormatter.encodeString( hash );
+		cell.setText( String.valueOf( num ));
 
-		cell.setText(str);
+		return;
+
 	}
 }

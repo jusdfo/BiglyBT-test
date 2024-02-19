@@ -90,10 +90,12 @@ import com.biglybt.pif.ui.menus.MenuManager;
 public class SB_Dashboard
 {
 	private static final String[][] examples = {
-			{ "dashboard.example.1", "d5:itemsld4:_uidi76e12:control_typei0e2:id7:Library3:mdi7:sidebar9:parent_id16:header.transfers7:skin_id25:com.biglybt.ui.skin.skin38:skin_ref7:library5:title7:Libraryed4:_uidi81e12:control_typei0e14:event_listenerd4:name43:com.biglybt.ui.swt.views.stats.ActivityViewe2:id9:SpeedView3:mdi6:tabbed7:skin_id25:com.biglybt.ui.skin.skin35:title8:Activityed4:_uidi145e12:control_typei0e14:event_listenerd4:name56:com.aelitis.azureus.plugins.view3d.Plugin3D$ViewListener9:plugin_id6:3dview11:plugin_name7:3D Viewe2:id23:view3d.most.active.name3:mdi7:sidebar9:parent_id14:header.plugins7:skin_id25:com.biglybt.ui.skin.skin35:title21:3D View (Most Active)ee6:layout28:76,76,145;76,76,145;81,81,818:use_tabsi0e7:weights15:670,325;700,297e" },
-			{ "dashboard.example.2", "d5:itemsld4:_uidi76e12:control_typei0e2:id7:Library3:mdi7:sidebar9:parent_id16:header.transfers7:skin_id25:com.biglybt.ui.skin.skin38:skin_ref7:library5:title7:Libraryed4:_uidi96e12:control_typei0e11:data_sourced6:exportd2:dn12:Shares: Sent3:key27:Dashboard: Anonymous Shares7:network3:I2P2:vti2ee8:exporter44:com.biglybt.plugin.net.buddy.BuddyPluginBetae14:event_listenerd4:name41:com.biglybt.plugin.net.buddy.swt.ChatViewe2:id53:Chat_I2P:IRQXG2DCN5QXEZB2EBAW433OPFWW65LTEBJWQYLSMVZQ3:mdi7:sidebar9:parent_id12:ChatOverview7:skin_id25:com.biglybt.ui.skin.skin35:title19:Anon - Shares: Sented4:_uidi100e12:control_typei0e11:data_sourced6:exportd4:anoni1e4:h_cmi1e5:h_dlnl3:I2Pe2:id16:UHQOFCLPP5YEIFRO7:versioni2e2:voi1ee8:exporter50:com.biglybt.core.subs.impl.SubscriptionManagerImple14:event_listenerd4:name49:com.biglybt.ui.swt.subscriptions.SubscriptionViewe2:id111:Subscription_042F84BA33D7C69F5F0BBDF56771D065E56ECE405EF157C8B14389477F6260F62062DFBF5EC5FA2E4904AC0C361F8243923:mdi7:sidebar9:parent_id13:Subscriptions7:skin_id25:com.biglybt.ui.skin.skin35:title23:Anon - Shares: Receivedee6:layout48:76,96,-1,-1;76,100,-1,-1;-1,-1,-1,-1;-1,-1,-1,-17:weights15:672,325;500,500e" },
-			{ "dashboard.example.3", "d5:itemsld4:_uidi76e12:control_typei0e2:id7:Library3:mdi7:sidebar9:parent_id16:header.transfers7:skin_id25:com.biglybt.ui.skin.skin38:skin_ref7:library5:title7:Libraryed4:_uidi103e12:control_typei0e14:event_listenerd4:name39:com.biglybt.ui.swt.views.PeersSuperViewe2:id12:AllPeersView3:mdi7:sidebar9:parent_id16:header.transfers7:skin_id25:com.biglybt.ui.skin.skin35:title9:All Peersed4:_uidi104e12:control_typei0e2:id8:Activity3:mdi7:sidebar9:parent_id11:header.vuze7:skin_id25:com.biglybt.ui.skin.skin38:skin_ref8:activity5:title13:Notificationsed4:_uidi105e12:control_typei0e2:id12:ChatOverview3:mdi7:sidebar9:parent_id16:header.discovery7:skin_id25:com.biglybt.ui.skin.skin38:skin_ref9:chatsview5:title13:Chat Overviewed4:_uidi106e12:control_typei0e2:id14:RelatedContent3:mdi7:sidebar9:parent_id16:header.discovery7:skin_id25:com.biglybt.ui.skin.skin38:skin_ref7:rcmview5:title17:Swarm Discoveriesed4:_uidi107e12:control_typei0e14:event_listenerd4:name35:com.biglybt.ui.swt.views.ConfigViewe2:id10:ConfigView3:mdi7:sidebar9:parent_id14:header.plugins7:skin_id25:com.biglybt.ui.skin.skin35:title7:Optionsed4:_uidi108e12:control_typei0e14:event_listenerd4:name40:com.biglybt.ui.swt.views.stats.StatsViewe2:id9:StatsView3:mdi7:sidebar9:parent_id14:header.plugins7:skin_id25:com.biglybt.ui.skin.skin35:title10:Statisticsee6:layout188:76,103,104,105,106,107,108;76,103,104,105,106,107,108;76,103,104,105,106,107,108;76,103,104,105,106,107,108;76,103,104,105,106,107,108;76,103,104,105,106,107,108;76,103,104,105,106,107,1088:use_tabsi1e7:weights0:e" },
-	};
+			// examples are bencoded - grab from stdout when using right-click "export to clipboard" (actual export is json)
+			
+		{ "dashboard.example.1", "d5:itemsld4:_uidi173e12:control_typei0e2:id7:Library3:mdi7:sidebar9:parent_id16:header.transfers7:skin_id25:com.biglybt.ui.skin.skin38:skin_ref7:library5:title7:Library8:title_id15:sidebar.Libraryed4:_uidi175e12:control_typei0e11:data_source17:TransferStatsView14:event_listenerd4:name43:com.biglybt.ui.swt.views.stats.ActivityViewe2:id9:SpeedView3:mdi6:tabbed7:skin_id25:com.biglybt.ui.skin.skin35:title8:Activity8:title_id20:SpeedView.title.fulled4:_uidi177e12:control_typei0e14:event_listenerd4:name56:com.aelitis.azureus.plugins.view3d.Plugin3D$ViewListener9:plugin_id6:3dview11:plugin_name7:3D Viewe2:id23:view3d.most.active.name3:mdi7:sidebar9:parent_id14:header.plugins7:skin_id25:com.biglybt.ui.skin.skin35:title21:3D View (Most Active)8:title_id23:view3d.most.active.nameee6:layout35:173,173,177;173,173,177;175,175,1758:use_tabsi0e7:weights15:686,309;678,321e" },
+ 		{ "dashboard.example.2", "d5:itemsld4:_uidi178e12:control_typei0e2:id7:Library3:mdi7:sidebar9:parent_id16:header.transfers7:skin_id25:com.biglybt.ui.skin.skin38:skin_ref7:library5:title7:Library8:title_id15:sidebar.Libraryed4:_uidi181e12:control_typei0e11:data_sourced6:exportd4:anoni1e4:h_cmi1e5:h_dlnl3:I2Pe2:id16:UHQOFCLPP5YEIFRO7:versioni2e2:voi1ee8:exporter50:com.biglybt.core.subs.impl.SubscriptionManagerImple14:event_listenerd4:name49:com.biglybt.ui.swt.subscriptions.SubscriptionViewe2:id111:Subscription_042F84BA33D7C69F5F0BBDF56771D065E56ECE405EF157C8B14389477F6260F62062DFBF5EC5FA2E4904AC0C361F8243923:mdi7:sidebar9:parent_id13:Subscriptions7:skin_id25:com.biglybt.ui.skin.skin35:title23:Anon - Shares: Receiveded4:_uidi182e12:control_typei0e11:data_sourced6:exportd2:dn12:Shares: Sent3:key27:Dashboard: Anonymous Shares7:network3:I2P2:vti2ee8:exporter44:com.biglybt.plugin.net.buddy.BuddyPluginBetae14:event_listenerd4:name41:com.biglybt.plugin.net.buddy.swt.ChatViewe2:id53:Chat_I2P:IRQXG2DCN5QXEZB2EBAW433OPFWW65LTEBJWQYLSMVZQ3:mdi7:sidebar9:parent_id12:ChatOverview7:skin_id25:com.biglybt.ui.skin.skin35:title19:Anon - Shares: Sentee6:layout35:178,182,182;178,181,181;178,181,1818:use_tabsi0e7:weights15:713,284;200,200e" },
+		{ "dashboard.example.3", "d5:itemsld4:_uidi183e12:control_typei0e2:id7:Library3:mdi7:sidebar9:parent_id16:header.transfers7:skin_id25:com.biglybt.ui.skin.skin38:skin_ref7:library5:title7:Library8:title_id15:sidebar.Libraryed4:_uidi184e12:control_typei0e14:event_listenerd4:name39:com.biglybt.ui.swt.views.PeersSuperViewe2:id12:AllPeersView3:mdi7:sidebar9:parent_id16:header.transfers7:skin_id25:com.biglybt.ui.skin.skin35:title9:All Peers8:title_id23:AllPeersView.title.fulled4:_uidi185e12:control_typei0e2:id8:Activity3:mdi7:sidebar9:parent_id11:header.vuze7:skin_id25:com.biglybt.ui.skin.skin38:skin_ref8:activity5:title13:Notifications8:title_id16:sidebar.Activityed4:_uidi192e12:control_typei0e2:id12:ChatOverview3:mdi7:sidebar9:parent_id16:header.discovery7:skin_id25:com.biglybt.ui.skin.skin38:skin_ref9:chatsview5:title13:Chat Overview8:title_id18:chats.view.headinged4:_uidi193e12:control_typei0e2:id14:RelatedContent3:mdi7:sidebar9:parent_id16:header.discovery7:skin_id25:com.biglybt.ui.skin.skin38:skin_ref7:rcmview5:title17:Swarm Discoveries8:title_id25:RelatedContent.title.fulled4:_uidi194e12:control_typei0e14:event_listenerd4:name35:com.biglybt.ui.swt.views.ConfigViewe2:id10:ConfigView3:mdi7:sidebar9:parent_id14:header.plugins7:skin_id25:com.biglybt.ui.skin.skin35:title7:Options8:title_id21:ConfigView.title.fulled4:_uidi195e12:control_typei0e14:event_listenerd4:name40:com.biglybt.ui.swt.views.stats.StatsViewe2:id9:StatsView3:mdi7:sidebar9:parent_id14:header.plugins7:skin_id25:com.biglybt.ui.skin.skin35:title10:Statistics8:title_id16:Stats.title.fullee6:layout195:183,184,185,192,193,194,195;183,184,185,192,193,194,195;183,184,185,192,193,194,195;183,184,185,192,193,194,195;183,184,185,192,193,194,195;183,184,185,192,193,194,195;183,184,185,192,193,194,1958:use_tabsi1e7:weights0:e" },
+ 	};
 	
 	private DashboardInstance	main_dashboard = new DashboardInstance();
 	
@@ -533,6 +535,19 @@ public class SB_Dashboard
 					topbar_dashboard.refresh( titleInfo );
 				}
 			});
+		
+		MessageText.addListener((l1,l2)->{
+			if ( bigly_ui ){
+				
+				main_dashboard.updateLocale();
+			
+				sidebar_dashboard.updateLocale();
+			
+				rightbar_dashboard.updateLocale();
+			}
+			
+			topbar_dashboard.updateLocale();
+		});
 	}
 
 	public void
@@ -770,6 +785,8 @@ public class SB_Dashboard
 	{
 		private final String	config_prefix;
 		private final boolean	use_tabs_default;
+		
+		Composite main_composite;
 		
 		private CopyOnWriteList<DashboardItem>		items = new CopyOnWriteList<>();
 		
@@ -1082,6 +1099,67 @@ public class SB_Dashboard
 		}
 		
 		private void
+		updateLocale()
+		{
+			Utils.execSWTThread(()->{
+				
+				if ( main_composite == null || main_composite.isDisposed()){
+					
+					return;
+				}
+				
+				updateLocale( main_composite );
+			});
+		}
+		
+		private void
+		updateLocale(
+			Composite	comp )
+		{
+			if ( comp instanceof CTabFolder ){
+				
+				CTabItem[] items = ((CTabFolder)comp).getItems();
+				
+				for ( CTabItem item: items ){
+					
+					String title_id = (String)item.getData( "sb:itemtitleid" );
+					
+					if ( title_id != null ){
+						
+						String new_text = MessageText.getString( title_id );
+						
+						if ( new_text != null ){
+							
+							item.setText( new_text + (item.getText().endsWith( "..." )?"...":"" ));
+						}
+					}
+				}
+			}else if ( comp instanceof Group ){
+				
+				String title_id = (String)comp.getData( "sb:itemtitleid" );
+				
+				if ( title_id != null ){
+					
+					String new_text = MessageText.getString( title_id );
+					
+					if ( new_text != null ){
+						
+						((Group)comp).setText(new_text);
+					}
+				}
+			}
+			
+			Control[] kids = comp.getChildren();
+			
+			for ( Control k: kids ){
+				
+				if ( k instanceof Composite ){
+					
+					updateLocale((Composite)k);
+				}
+			}
+		}
+		private void
 		clear()
 		{
 			List<DashboardItem> copy;
@@ -1272,9 +1350,21 @@ public class SB_Dashboard
 		
 		private void
 		setupTabItem(
-			CTabItem	item )
+			CTabItem			tab_item,
+			List<DashboardItem>	visible_items )
 		{
-			item.setShowClose( item.getData("sb:dashboarditem") != null && bigly_ui );
+			tab_item.setShowClose( tab_item.getData("sb:dashboarditem") != null && bigly_ui );
+			
+			DashboardItem main_item = visible_items.get(0);
+			
+			tab_item.setText( main_item.getTitle() + (visible_items.size()>1?"...":""));
+
+			String title_id = main_item.getTitleID();
+			
+			if ( title_id != null ){
+				
+				tab_item.setData( "sb:itemtitleid", title_id );
+			}
 		}
 		
 		private void
@@ -1628,6 +1718,8 @@ public class SB_Dashboard
 		build(
 			Composite		dashboard_composite )
 		{
+			main_composite = dashboard_composite;
+			
 			try{
 				building++;
 				
@@ -1941,8 +2033,7 @@ public class SB_Dashboard
 								}
 							}else{
 								if ( tab_item != null ){
-									setupTabItem( tab_item );
-									tab_item.setText( items.get(0).getTitle() + (items.size()>1?"...":""));
+									setupTabItem( tab_item, items );
 								}
 								result.addAll( items );
 							}
@@ -1968,8 +2059,7 @@ public class SB_Dashboard
 							}
 						}else{
 							if ( tab_item != null ){
-								setupTabItem( tab_item );
-								tab_item.setText( items.get(0).getTitle() + (items.size()>1?"...":""));
+								setupTabItem( tab_item, items );
 							}
 							result.addAll( items );
 						}
@@ -2136,8 +2226,7 @@ public class SB_Dashboard
 								}
 							}else{
 								if ( tab_item != null ){
-									setupTabItem( tab_item );
-									tab_item.setText( items.get(0).getTitle() + (items.size()>1?"...":""));
+									setupTabItem( tab_item, items );
 								}
 								result.addAll( items );
 							}
@@ -2163,8 +2252,7 @@ public class SB_Dashboard
 							}
 						}else{
 							if ( tab_item != null ){
-								setupTabItem( tab_item );
-								tab_item.setText( items.get(0).getTitle() + (items.size()>1?"...":""));
+								setupTabItem( tab_item, items );
 							}
 							result.addAll( items );
 						}
@@ -2286,6 +2374,13 @@ public class SB_Dashboard
 				if ( g instanceof Group ){
 					
 					((Group)g).setText( item.getTitle());
+					
+					String title_id = item.getTitleID();
+					
+					if ( title_id != null ){
+						
+						g.setData( "sb:itemtitleid", title_id );
+					}
 				}
 				
 				Composite menu_comp = use_tabs?sf:g;
@@ -2895,8 +2990,46 @@ public class SB_Dashboard
 			}
 			
 			public String
+			getTitleID()
+			{
+				String title_id = (String)map.get( "title_id" );
+				
+				if ( title_id == null ){
+					
+					String title = (String)map.get( "title" );
+					
+					if ( title.startsWith( "!" ) && title.endsWith( "!" )){
+						
+						title_id = title.substring( 1, title.length()-1 );
+					}
+				}
+				
+				if ( title_id != null ){
+					
+					if ( MessageText.getString( title_id ) != null ){
+						
+						return( title_id );
+					}
+				}
+				
+				return( null );
+			}
+			
+			public String
 			getTitle()
 			{
+				String title_id = (String)map.get( "title_id" );
+				
+				if ( title_id != null ){
+					
+					String t = MessageText.getString( title_id );
+					
+					if ( t != null ){
+						
+						return( t );
+					}
+				}
+				
 				String title = (String)map.get( "title" );
 				
 				if ( title.startsWith( "!" ) && title.endsWith( "!" )){

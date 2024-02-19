@@ -53,7 +53,9 @@ import com.biglybt.core.tag.TagFeatureProperties.TagProperty;
 import com.biglybt.core.tag.TagFeatureProperties.TagPropertyListener;
 import com.biglybt.core.torrent.PlatformTorrentUtils;
 import com.biglybt.core.torrent.TOTorrent;
+import com.biglybt.core.torrent.TOTorrentAnnounceURLGroup;
 import com.biglybt.core.torrent.TOTorrentAnnounceURLSet;
+import com.biglybt.core.tracker.TrackerPeerSource;
 import com.biglybt.core.tracker.client.TRTrackerScraperResponse;
 import com.biglybt.core.util.*;
 import com.biglybt.pif.PluginAdapter;
@@ -84,6 +86,8 @@ TagPropertyConstraintHandler
 
 	private static final Object DM_PEER_SETS					= new Object();
 	private static final Object DM_RATES						= new Object();
+	
+	private static final Object DM_TRACKERS						= new Object();
 	
 	private static final String		EVAL_CTX_COLOURS 	= "colours";
 	private static final String		EVAL_CTX_TAG_SORT 	= "tag_sort";
@@ -2782,6 +2786,9 @@ TagPropertyConstraintHandler
 		private static final int FT_GET_TAG_SORT		= 59;
 		private static final int FT_LENGTH				= 60;
 		private static final int FT_COUNT				= 61;
+		private static final int FT_TRACKER_PEERS		= 62;
+		private static final int FT_TRACKER_SEEDS		= 63;
+		private static final int FT_PLUGIN_OPTION		= 64;
 
 		static{
 			fn_map.put( "hastag", FT_HAS_TAG );
@@ -2858,6 +2865,11 @@ TagPropertyConstraintHandler
 			fn_map.put( "gettagsort", FT_GET_TAG_SORT );
 			fn_map.put( "length", FT_LENGTH );
 			fn_map.put( "count", FT_COUNT );
+			
+			fn_map.put( "trackerpeers", FT_TRACKER_PEERS );
+			fn_map.put( "trackerseeds", FT_TRACKER_SEEDS );
+			
+			fn_map.put( "pluginoption", FT_PLUGIN_OPTION );
 		}
 		
 		private static final int	DEP_STATIC		= 0;
@@ -2921,6 +2933,7 @@ TagPropertyConstraintHandler
 		private static final int	KW_MIN64				= 52;
 		private static final int	KW_MOC_PATH				= 53;
 		private static final int	KW_FILE_COUNT_SELECTED	= 54;
+		private static final int	KW_TRACKERS				= 55;
 
 		static{
 			keyword_map.put( "shareratio", 				new int[]{KW_SHARE_RATIO,			DEP_RUNNING });
@@ -3044,6 +3057,8 @@ TagPropertyConstraintHandler
 			
 			keyword_map.put( "filecountselected", 		new int[]{KW_FILE_COUNT_SELECTED,	DEP_STATIC });
 			keyword_map.put( "file_count_selected",		new int[]{KW_FILE_COUNT_SELECTED,	DEP_STATIC });
+
+			keyword_map.put( "trackers", 				new int[]{KW_TRACKERS,				DEP_STATIC });
 
 		}
 
@@ -3560,6 +3575,19 @@ TagPropertyConstraintHandler
 					case FT_IF_THEN_ELSE:{
 										
 						params_ok = num_params == 3;
+						
+						break;
+					}
+					case FT_TRACKER_PEERS:
+					case FT_TRACKER_SEEDS:{
+						
+						params_ok = num_params == 1 && getStringLiteral( params, 0 );
+						
+						break;
+					}
+					case FT_PLUGIN_OPTION:{
+						
+						params_ok = num_params == 2 && getStringLiteral( params, 0 ) && getStringLiteral( params, 1 );
 						
 						break;
 					}
@@ -4592,6 +4620,125 @@ TagPropertyConstraintHandler
 							
 							return( getWhatever( context, dm, tags, params, 2, debug ));
 						}
+					}
+					case FT_TRACKER_PEERS:
+					case FT_TRACKER_SEEDS:{
+						
+						int state = dm.getState();
+						
+						if ( state != DownloadManager.STATE_DOWNLOADING && state != DownloadManager.STATE_SEEDING ){
+							
+							return( -1 );
+						}
+						
+						String tracker = getStringParam( params, 0, debug ).toLowerCase( Locale.US );
+
+						String target = null;
+						
+						String app_name = Constants.APP_NAME;
+						
+						if ( tracker.equals( app_name.toLowerCase( Locale.US ) + "dht") || tracker.equals( "dht" )){
+							
+							target = "dht";
+							
+						}else if ( tracker.equals( "mldht" )){
+							
+							target = "mldht";
+									
+						}else if ( tracker.equals( "i2pdht" )){
+							
+							target = "i2p";
+							
+						}else{
+						
+							setError( "Unsupported tracker type: " + tracker );
+							
+							return( -1 );
+						}
+						
+						List<TrackerPeerSource> tps_list = dm.getTrackerPeerSources();
+
+						for ( TrackerPeerSource tps: tps_list ){
+							
+							int type = tps.getType();
+							
+							if ( type == TrackerPeerSource.TP_DHT && target.equals( "dht" )){
+								
+								if ( fn_type == FT_TRACKER_PEERS ){
+									
+									return( tps.getLeecherCount());
+									
+								}else{
+									
+									return( tps.getSeedCount());
+								}
+							}else if ( type == TrackerPeerSource.TP_PLUGIN ){
+																
+								String details = tps.getDetails();
+								
+								if ( details == null ){
+									
+									continue;
+								}
+								
+								if ( details.toLowerCase().startsWith( target )){
+									
+									if ( fn_type == FT_TRACKER_PEERS ){
+									
+										return( tps.getLeecherCount());
+										
+									}else{
+										
+										return( tps.getSeedCount());
+									}
+								}
+							}			
+						}
+
+						return( -1 );
+					}
+					case FT_PLUGIN_OPTION:{
+						
+						String plugin_id	= getStringParam( params, 0, debug ).toLowerCase();
+						
+						if ( plugin_id.equalsIgnoreCase( "dht" )){
+
+							plugin_id = "azbpdhdtracker";
+
+						}else if ( plugin_id.equalsIgnoreCase( "I2P" )){
+
+							plugin_id = "azneti2phelper";
+						}
+
+						String attr			= getStringParam( params, 1, debug ).toLowerCase();
+
+						if ( !attr.equals( DownloadManagerState.AT_PO_ENABLE_ANNOUNCE )){
+							
+							setError( "Unsupported plugin option attribute type: " + attr );
+							
+							return( null );
+						}
+						
+						boolean value = true;		// default
+						
+						Map all_opts = dm.getDownloadState().getMapAttribute( DownloadManagerState.AT_PLUGIN_OPTIONS );
+						
+						if ( all_opts != null ){
+													
+							Map opts = (Map)all_opts.get( plugin_id.toLowerCase( Locale.US ));
+							
+							if ( opts != null ){
+								
+								Number e = (Number)opts.get( DownloadManagerState.AT_PO_ENABLE_ANNOUNCE );
+								
+								if ( e != null ){
+									
+									value = e.intValue() != 0;
+								}
+							}
+						}
+						
+						return( value );
 					}
 				}
 
@@ -5652,6 +5799,75 @@ TagPropertyConstraintHandler
 					}
 					case KW_MIN64:{
 						return( Long.MIN_VALUE );
+					}
+					case KW_TRACKERS:{
+						
+						TOTorrent torrent = dm.getTorrent();
+
+						if ( torrent == null ){
+							
+							return( new String[0] );
+						}
+						
+						URL	announce = torrent.getAnnounceURL();
+						
+						TOTorrentAnnounceURLGroup group = torrent.getAnnounceURLGroup();
+
+						TOTorrentAnnounceURLSet[] sets = group.getAnnounceURLSets();
+
+						Object[] cache = (Object[])dm.getUserData( DM_TRACKERS );
+						
+						if ( cache != null ){
+															
+							if ( sets.length == 0 ){
+								
+								if ( cache[0] == announce ){
+									
+									return((String[])cache[1]);
+								}
+							}else{
+								
+								Object o = cache[0];
+								
+								if ( o instanceof Long && ((Long)o) == group.getUID()){
+									
+									return((String[])cache[1]);
+								}
+							}
+						}
+													
+						cache = new Object[2];
+						
+						if ( sets.length == 0 ){
+							
+							String result = announce.getHost();
+							
+							int port = announce.getPort();
+							
+							if ( port == -1 ){
+								
+								port = announce.getDefaultPort();
+							}
+							
+							if ( port >= 0 ){
+								
+								result += ":" + port;
+							}
+							
+							cache[0] = announce;
+							cache[1] = new String[]{ result };
+							
+						}else{
+							
+							Set<String> results = TorrentUtils.getUniqueTrackerHosts( torrent, true );
+							
+							cache[0] = group.getUID();
+							cache[1] = results.toArray( new String[results.size()] );
+						}
+						
+						dm.setUserData( DM_TRACKERS, cache );
+						
+						return((String[])cache[1] );
 					}
 					default:{
 						
