@@ -14,13 +14,18 @@
 		<java.version>1.8</java.version>
 		<swt.version>4.9</swt.version> <!-- build uses libs in uis/libs/*.jar -->
 		<junit.jupiter.version>5.4.0</junit.jupiter.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<repositories>
 		<repository>
 			<id>maven-eclipse-repo-fork</id><!-- a repository for swt 4.9 binaries -->
-			<url>https://lislei.github.io/maven-eclipse.github.io/maven</url>
+<!--			<url>https://lislei.github.io/maven-eclipse.github.io/maven</url>-->
+			<url>https://repo1.maven.org/maven2/</url>
 		</repository>
+
 		<!--
 		<repository>
 			<id>maven-eclipse-repo</id>

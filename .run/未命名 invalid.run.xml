@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="未命名 invalid" type="JarApplication">
+    <option name="JAR_PATH" value="D:/program1/downloader/BiglyBT-blue/BiglyBT.jar" />
+    <option name="PROGRAM_PARAMETERS" value="-Duser.dir=&quot;C:\Users\lvjinwei\AppData\Roaming\BiglyBT2&quot; -Dazureus.config.path=&quot;C:\Users\lvjinwei\AppData\Roaming\BiglyBT2&quot; -Dazureus.instance.port=16889 -DMULTI_INSTANCE=true -Dazureus.window.title=BiglyBT2  com.biglybt.ui.Main" />
+    <option name="WORKING_DIRECTORY" value="D:\program1\downloader\BiglyBT-blue" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="ALTERNATIVE_JRE_PATH" value="D:/lib1/java/JDK/jdk-20.0.1" />
+    <method v="2" />
+  </configuration>
+</component>

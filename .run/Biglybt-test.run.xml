@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Biglybt-test" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="D:/lib1/java/JRE/OpenJRE11" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="com.biglybt.ui.Main" />
+    <module name="biglybt-ui" />
+    <option name="VM_PARAMETERS" value="-classpath &quot;D:\Program Files\BiglyBT-test\swt.jar;D:\Program Files\BiglyBT-test\common-cli.jar;D:\Program Files\BiglyBT-test\BiglyBT.jar&quot; -Dazureus.config.path=&quot;D:\Program Files\BiglyBT-test\User-Data&quot; -Dazureus.instance.port=16889 -DMULTI_INSTANCE=false -Dazureus.window.title=BiglyBT-test" />
+    <option name="WORKING_DIRECTORY" value="D:/Program Files/BiglyBT-test" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

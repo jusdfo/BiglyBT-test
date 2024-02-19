@@ -1988,7 +1988,7 @@ DownloadManagerImpl
 
 			if (!FileUtil.areFilePathsIdentical(old_path, from_loc)) {
 
-				throw new RuntimeException("assert failure: old_path=" + old_path + ", from_loc=" + from_loc);
+ 				throw new RuntimeException("assert failure: old_path=" + old_path + ", from_loc=" + from_loc);
 			}
 
 			//System.out.println( "   adding " + old_path + " -> null" );
